@@ -1,11 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 function LoginScreen() {
+  
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  useEffect(() => {
+    const userId = sessionStorage.getItem('userId');
+    if (userId) {
+      navigate('/'); 
+    }
+  }, [navigate]);
   const handleSubmit = async (event) => {
     event.preventDefault();
     
@@ -16,9 +24,11 @@ function LoginScreen() {
       });
 
       const data = response.data;
+      
+
       if (data.success) {
-        sessionStorage.setItem('user', JSON.stringify(response.data.user));
-        navigate('/dashboard');
+        sessionStorage.setItem('userId', response.data.user.ID);
+        navigate('/');
       } else {
         
         console.error('Login failed:', data.message);
