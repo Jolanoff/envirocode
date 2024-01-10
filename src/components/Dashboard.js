@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+
+
 const Dashboard = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('userId'); // Remove the user's ID from session storage
+    navigate('/login'); // Redirect to login page
+  };
     return (
         <div className="min-h-screen bg-gray-100">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+     
         <h1 className="text-3xl font-semibold text-gray-900 py-6">Dashboard</h1>
-        
+        <button onClick={handleLogout}>Logout</button>
+      
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <div className="px-4 py-5 sm:px-6 flex justify-between">
             <h3 className="text-lg leading-6 font-medium text-gray-900">

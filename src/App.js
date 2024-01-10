@@ -2,7 +2,7 @@ import Dashboard from "./components/Dashboard";
 import LoginScreen from "./components/LoginScreen";
 import Register from "./components/Register";
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 function App() {
   return (
     <Router>
@@ -11,7 +11,16 @@ function App() {
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/register" element={<Register />} />
 
-        <Route path="/" element={<Dashboard/>} />
+        <Route
+          path="/"
+          element={
+            sessionStorage.getItem('userId') ? (
+              <Dashboard />
+            ) : (
+              <Navigate replace to="/login" />
+            )
+          }
+        />
       </Routes>
     </Router>
   );

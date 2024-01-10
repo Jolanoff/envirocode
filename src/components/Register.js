@@ -27,7 +27,6 @@ function Register() {
   
         const data = response.data;
         if (data.success) {
-          sessionStorage.setItem('user', JSON.stringify(response.data.user));
           navigate('/');
         } else {
           
