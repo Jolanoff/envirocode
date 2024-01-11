@@ -73,8 +73,24 @@ const Dashboard = () => {
     }
   }, []);
 
-
-
+  const handleDelete = (testId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this test?");
+    if (confirmDelete) {
+      axios.delete(`http://localhost:3001/delete-test/${testId}`)
+        .then(response => {
+          // Update the tests state to remove the deleted test
+          setTests(currentTests => currentTests.filter(test => test.id !== testId));
+          alert('Test deleted successfully');
+          window.location.reload()
+        })
+        .catch(error => {
+          // Handle the error
+          console.error('Error deleting test:', error);
+          alert('Failed to delete test');
+        });
+    }
+  };
+  
 
   if (!userData) {
     return <div>Loading user data...</div>;
@@ -100,7 +116,23 @@ const Dashboard = () => {
         <td className="px-4 py-3">{item.Troebelheid}</td>
         <td className="px-4 py-3">{item.Locatie}</td>
         <td className="px-4 py-3">{formatTestDate(item.TestDatumTijd)}</td>
-
+      
+      </tr>
+    )
+  }
+  const UserResultViewItem = (item) => {
+    return (
+      <tr key={item.TestID} className="border-b dark:border-gray-700">
+        <th scope="row" className=" px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+          {item.voornaam}
+        </th>
+        <td className="px-4 py-3">{item.solid_units}</td>
+        <td className="px-4 py-3">{item.Troebelheid}</td>
+        <td className="px-4 py-3">{item.Locatie}</td>
+        <td className="px-4 py-3">{formatTestDate(item.TestDatumTijd)}</td>
+        <button  onClick={() => handleDelete(item.TestID)}  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+        Delete Test
+      </button>
       </tr>
     )
   }
@@ -183,7 +215,7 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {currentTestsTests.map(test => AllResultViewItem(test))}
+                  {currentTestsTests.map(test => UserResultViewItem(test))}
                 </tbody>
                 {tests.length > itemsPerPageTests && (
                   <Pagination

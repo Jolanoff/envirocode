@@ -31,17 +31,16 @@ app.post('/login', (req, res) => {
     const query = 'SELECT * FROM gebruiker WHERE email = ? AND wachtwoord = ?';
     db.query(query, [email, password], (err, result) => {
         if (err) {
-            // Handle the error in a way that doesn't expose sensitive information
+           
             return res.status(500).json({ success: false, message: 'An error occurred during login' });
         }
 
         if (result.length > 0) {
-            // User authenticated
-            // Remove the password from the user object before sending it to the frontend
+            
             const { wachtwoord, ...userWithoutPassword } = result[0];
             res.json({ success: true, message: 'Login successful', user: userWithoutPassword });
         } else {
-            // Invalid credentials
+         
             res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
     });
@@ -51,12 +50,12 @@ app.post('/login', (req, res) => {
 app.post('/register', (req, res) => {
     const { voornaam, achternaam, email, password, key } = req.body;
     
-    // Check if all fields are provided
+  
     if (!voornaam || !achternaam || !email || !password || !key) {
         return res.status(400).json({ success: false, message: 'All fields are required' });
     }
 
-    // Check if the user already exists
+  
     const checkUserQuery = 'SELECT email FROM gebruiker WHERE email = ?';
     db.query(checkUserQuery, [email], (err, result) => {
         if (err) {
@@ -64,18 +63,18 @@ app.post('/register', (req, res) => {
         }
 
         if (result.length > 0) {
-            // User already exists
+        
             return res.status(409).json({ success: false, message: 'User already exists' });
         } else {
-            // Insert the new user into the database
+           
             const insertQuery = 'INSERT INTO gebruiker (voornaam, achternaam, email, wachtwoord, key) VALUES (?, ?, ?, ?, ?)';
             db.query(insertQuery, [voornaam, achternaam, email, password, key], (insertErr, insertResult) => {
                 if (insertErr) {
                     return res.status(500).json({ success: false, message: 'Error registering user', error: insertErr });
                 }
-                // Assuming auto-increment ID is used
+                
                 const newUserId = insertResult.insertId;
-                // Send the new user ID to the frontend
+                
                 res.status(201).json({ success: true, message: 'User registered successfully', userId: newUserId });
             });
         }
@@ -133,6 +132,25 @@ app.get('/user-tests/:userId', (req, res) => {
         }
 
         res.json({ success: true, message: 'User tests retrieved successfully', tests: result });
+    });
+});
+app.delete('/delete-test/:testId', (req, res) => {
+    const testId = req.params.testId;
+
+    
+    const query = 'DELETE FROM watertest WHERE TestID = ?';
+
+    db.query(query, [testId], (err, result) => {
+        if (err) {
+           
+            return res.status(500).json({ success: false, message: 'Failed to delete test', error: err });
+        }
+
+        if (result.affectedRows > 0) {
+            res.json({ success: true, message: 'Test deleted successfully' });
+        } else {
+            res.status(404).json({ success: false, message: 'Test not found' });
+        }
     });
 });
 
