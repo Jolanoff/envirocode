@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import { FaArrowLeft, FaArrowRight, FaAngleDoubleRight, FaAngleDoubleLeft } from 'react-icons/fa';
@@ -189,9 +189,9 @@ const Dashboard = () => {
               <strong>activation key:</strong> {userData.act_key}
             </div>
           </div>
-          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ">
+          <Link to="/edit-profile"className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ">
             Edit Profile
-          </button>
+          </Link>
         </div>
 
         <div className="mt-8">

@@ -1,4 +1,5 @@
 import Dashboard from "./components/Dashboard";
+import EditProfile from "./components/EditProfile";
 import LoginScreen from "./components/LoginScreen";
 import Register from "./components/Register";
 
@@ -16,6 +17,18 @@ function App() {
           element={
             sessionStorage.getItem('userId') ? (
               <Dashboard />
+
+            ) : (
+              <Navigate replace to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/edit-profile"
+          element={
+            sessionStorage.getItem('userId') ? (
+              <EditProfile />
+              
             ) : (
               <Navigate replace to="/login" />
             )

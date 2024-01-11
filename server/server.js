@@ -153,6 +153,30 @@ app.delete('/delete-test/:testId', (req, res) => {
         }
     });
 });
+app.put('/edit-profile/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const { voornaam, achternaam, email, TelefoonNummer, regio, geboorteDatum, act_key } = req.body;
+
+    // SQL query to update user data
+    const query = `
+        UPDATE gebruiker 
+        SET voornaam = ?, achternaam = ?, email = ?, TelefoonNummer = ?, regio = ?, geboorteDatum = ?, act_key = ?
+        WHERE id = ?
+    `;
+
+    db.query(query, [voornaam, achternaam, email, TelefoonNummer, regio, geboorteDatum, act_key, userId], (err, result) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Failed to update profile', error: err });
+        }
+
+        if (result.affectedRows > 0) {
+            res.json({ success: true, message: 'Profile updated successfully' });
+        } else {
+            res.status(404).json({ success: false, message: 'User not found' });
+        }
+    });
+});
+
 
 
 
