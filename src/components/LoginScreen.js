@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function LoginScreen() {
   
@@ -66,7 +66,7 @@ function LoginScreen() {
             </div>
             <div className="flex items-baseline justify-between">
               <button className="px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900">Login</button>
-              <a href="#" className="text-sm text-blue-600 hover:underline">Forgot password?</a>
+              <Link to="/register"  className="text-sm text-blue-600 hover:underline">Register?</Link>
             </div>
           </div>
         </form>

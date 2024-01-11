@@ -117,6 +117,24 @@ app.get('/watertest', (req, res) => {
         res.json({ success: true, message: 'Water test data retrieved successfully', data: result });
     });
 });
+app.get('/user-tests/:userId', (req, res) => {
+    const userId = req.params.userId;
+
+    const query = `
+        SELECT watertest.*, gebruiker.voornaam 
+        FROM watertest 
+        JOIN gebruiker ON watertest.gebruikerid = gebruiker.id
+        WHERE watertest.gebruikerid = ?
+    `;
+
+    db.query(query, [userId], (err, result) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Failed to retrieve user tests', error: err });
+        }
+
+        res.json({ success: true, message: 'User tests retrieved successfully', tests: result });
+    });
+});
 
 
 

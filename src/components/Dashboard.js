@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import Pagination from 'react-js-pagination';
+import { FaArrowLeft, FaArrowRight, FaAngleDoubleRight, FaAngleDoubleLeft } from 'react-icons/fa';
 
 
 const Dashboard = () => {
@@ -11,6 +12,13 @@ const Dashboard = () => {
   const [waterTests, setWaterTests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+//for all tests
+  const [activePage, setActivePage] = useState(1);
+  const itemsPerPage = 5;
+//for logged in user's tests
+  const [activePageTests, setActivePageTests] = useState(1);
+  const itemsPerPageTests = 5;
 
   const handleLogout = () => {
     sessionStorage.removeItem('userId');
@@ -47,6 +55,23 @@ const Dashboard = () => {
       });
   }, []);
 
+  const [tests, setTests] = useState([]);
+  useEffect(() => {
+    const userId = sessionStorage.getItem('userId');
+    if (userId) {
+      axios.get(`http://localhost:3001/user-tests/${userId}`)
+        .then(response => {
+          setTests(response.data.tests);
+          setIsLoading(false);
+        })
+        .catch(error => {
+          setError(error.message);
+          setIsLoading(false);
+        });
+    } else {
+
+    }
+  }, []);
 
 
 
@@ -62,6 +87,7 @@ const Dashboard = () => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   }
+
 
 
   const AllResultViewItem = (item) => {
@@ -80,6 +106,27 @@ const Dashboard = () => {
   }
 
 
+  //pagination  
+
+
+
+  const indexOfLastTest = activePage * itemsPerPage;
+  const indexOfFirstTest = indexOfLastTest - itemsPerPage;
+  const currentTests = waterTests.slice(indexOfFirstTest, indexOfLastTest);
+
+
+  const handlePageChange = (pageNumber) => {
+    setActivePage(pageNumber);
+  };
+
+
+  const indexOfLastTestTests = activePageTests * itemsPerPageTests;
+  const indexOfFirstTestTests = indexOfLastTestTests - itemsPerPageTests;
+  const currentTestsTests = tests.slice(indexOfFirstTestTests, indexOfLastTestTests);
+
+  const handlePageChangeTests = (pageNumber) => {
+    setActivePageTests(pageNumber);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -114,6 +161,52 @@ const Dashboard = () => {
             Edit Profile
           </button>
         </div>
+
+        <div className="mt-8">
+          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div className="px-4 py-5 sm:px-6 flex justify-between">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">
+                Mijn Resultaten
+              </h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th scope="col" className="px-4 py-3">Voornaam</th>
+
+                    <th scope="col" className="px-4 py-3">solid units</th>
+                    <th scope="col" className="px-4 py-3">Troebelheid</th>
+
+                    <th scope="col" className="px-4 py-3">Locatie</th>
+                    <th scope="col" className="px-4 py-3">Test Datum</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentTestsTests.map(test => AllResultViewItem(test))}
+                </tbody>
+                {tests.length > itemsPerPageTests && (
+                  <Pagination
+                    activePage={activePageTests}
+                    itemsCountPerPage={itemsPerPageTests}
+                    totalItemsCount={tests.length}
+                    pageRangeDisplayed={5}
+                    onChange={handlePageChangeTests}
+                    innerClass="flex justify-center mt-2"
+                    linkClass="mx-1 flex h-9 w-9 items-center justify-center rounded-full border border-blue-gray-100 bg-blue p-0 text-sm"
+                    itemClass="mt-5 mb-5 text-blue-gray-500 hover:bg-light-300"
+                    activeLinkClass="text-white bg-blue-500 hover:bg-blue-600"
+                    prevPageText={<FaArrowLeft className='text-gray-500' />}
+                    lastPageText={<FaAngleDoubleRight className='text-gray-500' />}
+                    firstPageText={<FaAngleDoubleLeft className='text-gray-500' />}
+                    nextPageText={<FaArrowRight className='text-gray-500' />}
+                  />
+                )}
+              </table>
+
+            </div>
+          </div>
+        </div>
         <div className="mt-8">
           <div className="bg-white shadow overflow-hidden sm:rounded-lg">
             <div className="px-4 py-5 sm:px-6 flex justify-between">
@@ -135,42 +228,32 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {waterTests.map(x => AllResultViewItem(x))}
+                  {currentTests.map(test => AllResultViewItem(test))}
                 </tbody>
+                {waterTests.length > itemsPerPage && (
+                  <Pagination
+                    activePage={activePage}
+                    itemsCountPerPage={itemsPerPage}
+                    totalItemsCount={waterTests.length}
+                    pageRangeDisplayed={5}
+                    onChange={handlePageChange}
+                    innerClass="flex justify-center mt-2"
+                    linkClass="mx-1 flex h-9 w-9 items-center justify-center rounded-full border border-blue-gray-100 bg-blue p-0 text-sm"
+                    itemClass="mt-5 mb-5 text-blue-gray-500 hover:bg-light-300"
+                    activeLinkClass="text-white bg-blue-500 hover:bg-blue-600"
+                    prevPageText={<FaArrowLeft className='text-gray-500' />}
+                    lastPageText={<FaAngleDoubleRight className='text-gray-500' />}
+                    firstPageText={<FaAngleDoubleLeft className='text-gray-500' />}
+                    nextPageText={<FaArrowRight className='text-gray-500' />}
 
+                  />
+                )}
               </table>
             </div>
           </div>
         </div>
 
-        <div className="mt-8">
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-            <div className="px-4 py-5 sm:px-6 flex justify-between">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">
-                Andere Resultaten
-              </h3>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                  <tr>
-                    <th scope="col" className="px-4 py-3">Voornaam</th>
 
-                    <th scope="col" className="px-4 py-3">solid units</th>
-                    <th scope="col" className="px-4 py-3">Troebelheid</th>
-
-                    <th scope="col" className="px-4 py-3">Locatie</th>
-                    <th scope="col" className="px-4 py-3">Test Datum</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {waterTests.map(x => AllResultViewItem(x))}
-                </tbody>
-
-              </table>
-            </div>
-          </div>
-        </div>
 
       </div>
     </div>
