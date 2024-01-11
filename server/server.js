@@ -82,6 +82,26 @@ app.post('/register', (req, res) => {
     });
 });
 
+app.get('/user/:id', (req, res) => {
+    const userId = req.params.id;
+    const query = 'SELECT id, voornaam, achternaam, email, TelefoonNummer, regio, geboorteDatum, act_key  FROM gebruiker WHERE id = ?';
+
+    db.query(query, [userId], (err, result) => {
+        if (err) {
+      
+            return res.status(500).json({ success: false, message: 'Failed to retrieve user', error: err });
+        }
+
+        if (result.length > 0) {
+        
+            res.json({ success: true, message: 'User retrieved successfully', user: result[0] });
+        } else {
+     
+            res.status(404).json({ success: false, message: 'User not found' });
+        }
+    });
+});
+
 
 const PORT = 3001;
 app.listen(PORT, () => {
